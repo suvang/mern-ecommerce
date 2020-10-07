@@ -70,7 +70,7 @@ function FileUpload(props) {
             <img
               style={{ minWidth: "300px", width: "300px", height: "240px" }}
               src={
-                `http://localhost:5000/${image}` ||
+                /*`http://localhost:5000/${image}` || */
                 `https://online-shopping-suvang.herokuapp.com/${image}`
               }
               alt={`productImg-${index}`}
