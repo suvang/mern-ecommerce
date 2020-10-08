@@ -23,11 +23,20 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage }).single("file");
 
+var cloudinary = require("cloudinary");
+
+cloudinary.config({
+  cloud_name: "boringmemes",
+  api_key: "647714842291216",
+  api_secret: "pd-S73PvivUEwp1YxGkIfR3Svak",
+});
+
 //=================================
 //             Product
 //=================================
 
-router.post("/uploadImage", auth, (req, res) => {
+/*router.post("/uploadImage", auth, upload, (req, res) => {
+  console.log("filename:", res.req.file);
   upload(req, res, (err) => {
     if (err) {
       return res.json({ success: false, err });
@@ -35,6 +44,36 @@ router.post("/uploadImage", auth, (req, res) => {
     return res.json({
       success: true,
       image: res.req.file.path,
+      fileName: res.req.file.filename,
+    });
+  });
+}); */
+
+router.post("/uploadImage", auth, upload, async (req, res) => {
+  console.log("filename:", req.file.path);
+  // String path = res.req.file.path;
+  /* cloudinary.v2.uploader.upload(req.file.path, res, (err) => {
+    if (err) {
+      return res.json({ success: false, err });
+    }
+    return res.json({
+      success: true,
+      image: res.secure_url,
+      fileName: res.req.file.filename,
+    });
+  }); */
+  const result = await cloudinary.v2.uploader.upload(req.file.path);
+  console.log("cloudinary url:", result.secure_url);
+  //res.send(result);
+
+  upload(req, res, (err) => {
+    if (err) {
+      return res.json({ success: false, err });
+    }
+    return res.json({
+      success: true,
+      // image: res.req.file.path,
+      image: result.secure_url,
       fileName: res.req.file.filename,
     });
   });
